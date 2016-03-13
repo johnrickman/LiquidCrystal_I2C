@@ -219,7 +219,7 @@ void LiquidCrystal_I2C::createChar(uint8_t location, const char *charmap) {
 	location &= 0x7; // we only have 8 locations 0-7
 	command(LCD_SETCGRAMADDR | (location << 3));
 	for (int i=0; i<8; i++) {
-	    write(pgm_read_byte_near(charmap++));
+	    	write(pgm_read_byte_near(charmap++));
 	}
 }
 
