@@ -52,7 +52,7 @@ void displayKeyCodes(void) {
   while (1) {
     lcd.clear();
     lcd.print("Codes 0x"); lcd.print(i, HEX);
-    lcd.print("-0x"); lcd.print(i+16, HEX);
+    lcd.print("-0x"); lcd.print(i+15, HEX);
     lcd.setCursor(0, 1);
     for (int j=0; j<16; j++) {
       lcd.printByte(i+j);
