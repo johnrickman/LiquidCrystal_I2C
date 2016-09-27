@@ -1,15 +1,28 @@
 {
-  "name": "LiquidCrystal_I2C",
-  "keywords": "LCD, liquidcrystal, I2C",
-  "description": "A library for DFRobot I2C LCD displays",
-  "repository":
-  {
-    "type": "git",
-    "url": "https://github.com/marcoschwartz/LiquidCrystal_I2C.git"
-  },
-  "frameworks": "arduino",
-  "platforms":
-  [
-    "atmelavr"
-  ]
+    "name": "LiquidCrystal_I2C",
+    "description": "A library for DFRobot I2C LCD displays",
+    "keywords": "LCD, liquidcrystal, I2C",
+    "authors": [
+        {
+            "name": "Frank de Brabander"
+        },
+        {
+            "name": "Marco Schwartz",
+            "email": "marcolivier.schwartz@gmail.com",
+            "url": "https://github.com/marcoschwartz",
+            "maintainer": true
+        }
+    ],
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/marcoschwartz/LiquidCrystal_I2C.git"
+    },
+    "version": "1.1.2",
+    "frameworks": "arduino",
+    "platforms": [
+        "atmelavr"
+    ],
+    "examples": [
+        "examples/*/*.pde"
+    ]
 }
