@@ -12,7 +12,7 @@
 
 uint8_t bell[8]  = {0x4,0xe,0xe,0xe,0x1f,0x0,0x4};
 uint8_t note[8]  = {0x2,0x3,0x2,0xe,0x1e,0xc,0x0};
-uint8_t clock[8] = {0x0,0xe,0x15,0x17,0x11,0xe,0x0};
+uint8_t _clock[8] = {0x0,0xe,0x15,0x17,0x11,0xe,0x0};
 uint8_t heart[8] = {0x0,0xa,0x1f,0x1f,0xe,0x4,0x0};
 uint8_t duck[8]  = {0x0,0xc,0x1d,0xf,0xf,0x6,0x0};
 uint8_t check[8] = {0x0,0x1,0x3,0x16,0x1c,0x8,0x0};
@@ -23,12 +23,20 @@ LiquidCrystal_I2C lcd(0x27,20,4);  // set the LCD address to 0x27 for a 16 chars
 
 void setup()
 {
-  lcd.init();                      // initialize the lcd 
+  // initialization of the lcd :
+  #if defined(ARDUINO_SAM_DUE)
+    // it's an Arduino DUE, let's specify that we prefer to use the second I2C bus (Wire1 instead of Wire) :
+    lcd.init(Wire1);
+  #else
+    // not an Arduino DUE => by default, we use the main I2C bus (Wire) :
+    lcd.init(); 
+  #endif
+
   lcd.backlight();
   
   lcd.createChar(0, bell);
   lcd.createChar(1, note);
-  lcd.createChar(2, clock);
+  lcd.createChar(2, _clock);
   lcd.createChar(3, heart);
   lcd.createChar(4, duck);
   lcd.createChar(5, check);
