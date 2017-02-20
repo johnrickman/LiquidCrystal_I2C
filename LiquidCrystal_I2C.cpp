@@ -6,7 +6,7 @@
 
 #include "Arduino.h"
 
-#define printIIC(args)	Wire.write(args)
+#define printIIC(args)	_i2c_bus.write(args)
 inline size_t LiquidCrystal_I2C::write(uint8_t value) {
 	send(value, Rs);
 	return 1;
@@ -15,7 +15,7 @@ inline size_t LiquidCrystal_I2C::write(uint8_t value) {
 #else
 #include "WProgram.h"
 
-#define printIIC(args)	Wire.send(args)
+#define printIIC(args)	_i2c_bus.send(args)
 inline void LiquidCrystal_I2C::write(uint8_t value) {
 	send(value, Rs);
 }
@@ -52,13 +52,15 @@ LiquidCrystal_I2C::LiquidCrystal_I2C(uint8_t lcd_Addr,uint8_t lcd_cols,uint8_t l
   _backlightval = LCD_NOBACKLIGHT;
 }
 
-void LiquidCrystal_I2C::init(){
+// Optional argument i2c_bus gives the opportunity to use Wire1 instead of Wire on the Arduino models that have two I2C buses (such as the Arduino DUE)
+void LiquidCrystal_I2C::init(TwoWire &i2c_bus){
+	_i2c_bus = i2c_bus;
 	init_priv();
 }
 
 void LiquidCrystal_I2C::init_priv()
 {
-	Wire.begin();
+	_i2c_bus.begin();
 	_displayfunction = LCD_4BITMODE | LCD_1LINE | LCD_5x8DOTS;
 	begin(_cols, _rows);  
 }
@@ -214,15 +216,6 @@ void LiquidCrystal_I2C::createChar(uint8_t location, uint8_t charmap[]) {
 	}
 }
 
-//createChar with PROGMEM input
-void LiquidCrystal_I2C::createChar(uint8_t location, const char *charmap) {
-	location &= 0x7; // we only have 8 locations 0-7
-	command(LCD_SETCGRAMADDR | (location << 3));
-	for (int i=0; i<8; i++) {
-	    	write(pgm_read_byte_near(charmap++));
-	}
-}
-
 // Turn the (optional) backlight off/on
 void LiquidCrystal_I2C::noBacklight(void) {
 	_backlightval=LCD_NOBACKLIGHT;
@@ -259,9 +252,9 @@ void LiquidCrystal_I2C::write4bits(uint8_t value) {
 }
 
 void LiquidCrystal_I2C::expanderWrite(uint8_t _data){                                        
-	Wire.beginTransmission(_Addr);
+	_i2c_bus.beginTransmission(_Addr);
 	printIIC((int)(_data) | _backlightval);
-	Wire.endTransmission();   
+	_i2c_bus.endTransmission();   
 }
 
 void LiquidCrystal_I2C::pulseEnable(uint8_t _data){
