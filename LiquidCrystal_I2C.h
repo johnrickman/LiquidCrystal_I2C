@@ -110,7 +110,7 @@ void draw_horizontal_graph(uint8_t row, uint8_t column, uint8_t len,  uint8_t pi
 void draw_vertical_graph(uint8_t row, uint8_t column, uint8_t len,  uint8_t pixel_col_end);
 	 
 
-private:
+protected:
   void init_priv();
   void send(uint8_t, uint8_t);
   void write4bits(uint8_t);
