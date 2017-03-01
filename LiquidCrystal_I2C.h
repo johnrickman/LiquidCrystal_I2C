@@ -3,7 +3,7 @@
 #define LiquidCrystal_I2C_h
 
 #include <inttypes.h>
-#include "Print.h" 
+#include <Print.h> 
 #include <Wire.h>
 
 // commands
@@ -52,18 +52,82 @@
 #define Rw B00000010  // Read/Write bit
 #define Rs B00000001  // Register select bit
 
+/**
+ * This is the driver for the Liquid Crystal LCD displays that use the I2C bus.
+ *
+ * After creating an instance of this class, first call begin() before anything else.
+ * The backlight is on by default, since that is the most likely operating mode in
+ * most cases.
+ */
 class LiquidCrystal_I2C : public Print {
 public:
-  LiquidCrystal_I2C(uint8_t lcd_Addr,uint8_t lcd_cols,uint8_t lcd_rows);
-  void begin(uint8_t cols, uint8_t rows, uint8_t charsize = LCD_5x8DOTS );
+	/**
+	 * Constructor
+	 *
+	 * @param lcd_addr	I2C slave address of the LCD display. Most likely printed on the
+	 *					LCD circuit board, or look in the supplied LCD documentation.
+	 * @param lcd_cols	Number of columns your LCD display has.
+	 * @param lcd_rows	Number of rows your LCD display has.
+	 * @param charsize	The size in dots that the display has, use LCD_5x10DOTS or LCD_5x8DOTS.
+	 */
+  LiquidCrystal_I2C(uint8_t lcd_addr,uint8_t lcd_cols,uint8_t lcd_rows, uint8_t charsize = LCD_5x8DOTS);
+  
+  	/**
+	 * Set the LCD display in the correct begin state, must be called before anything else is done.
+	 * Optional argument i2c_bus gives the opportunity to use Wire1 instead of Wire on the Arduino models that have two I2C buses (such as the Arduino DUE)
+	 */
+  void begin(TwoWire &i2c_bus = Wire);
+  
+    	/**
+	 * Gives you the ability to change some settings of the LCD a posteriori.
+	 * Note that begin() must be called before any reset()
+	 */
+  void reset(uint8_t cols, uint8_t rows, uint8_t charsize = LCD_5x8DOTS );
+  
+  	 /**
+	  * Remove all the characters currently shown. Next print/write operation will start
+	  * from the first position on LCD display.
+	  */
   void clear();
+
+	/**
+	 * Next print/write operation will will start from the first position on the LCD display.
+	 */
   void home();
+
+	 /**
+	  * Do not show any characters on the LCD display. Backlight state will remain unchanged.
+	  * Also all characters written on the display will return, when the display in enabled again.
+	  */
   void noDisplay();
+
+	/**
+	 * Show the characters on the LCD display, this is the normal behaviour. This method should
+	 * only be used after noDisplay() has been used.
+	 */
   void display();
+
+	/**
+	 * Do not blink the cursor indicator.
+	 */
   void noBlink();
+
+	/**
+	 * Start blinking the cursor indicator.
+	 */
   void blink();
+
+	/**
+	 * Do not show a cursor indicator.
+	 */
   void noCursor();
+
+	/**
+ 	 * Show a cursor indicator, cursor can blink on not blink. Use the
+	 * methods blink() and noBlink() for changing cursor blink.
+	 */
   void cursor();
+
   void scrollDisplayLeft();
   void scrollDisplayRight();
   void printLeft();
@@ -87,7 +151,6 @@ public:
   virtual void write(uint8_t);
 #endif
   void command(uint8_t);
-  void init(TwoWire &i2c_bus = Wire);
 
 ////compatibility API function aliases
 void blink_on();						// alias for blink()
@@ -111,18 +174,18 @@ void draw_vertical_graph(uint8_t row, uint8_t column, uint8_t len,  uint8_t pixe
 	 
 
 protected:
-  void init_priv();
+  void reset();
   void send(uint8_t, uint8_t);
   void write4bits(uint8_t);
   void expanderWrite(uint8_t);
   void pulseEnable(uint8_t);
-  uint8_t _Addr;
+  uint8_t _addr;
   uint8_t _displayfunction;
   uint8_t _displaycontrol;
   uint8_t _displaymode;
-  uint8_t _numlines;
   uint8_t _cols;
   uint8_t _rows;
+  uint8_t _charsize;
   uint8_t _backlightval;
   TwoWire &_i2c_bus = Wire;
 };

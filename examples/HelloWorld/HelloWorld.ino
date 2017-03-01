@@ -4,22 +4,20 @@
 #include <Wire.h> 
 #include <LiquidCrystal_I2C.h>
 
-LiquidCrystal_I2C lcd(0x27,20,4);  // set the LCD address to 0x27 for a 16 chars and 2 line display
+LiquidCrystal_I2C lcd(0x27, 16, 2);  // Set the LCD address to 0x27 for a 16 chars and 2 line display
 
 void setup()
 {
-  lcd.init(); // initialize the lcd 
-  
   // initialization of the lcd :
   #if defined(ARDUINO_SAM_DUE)
     // it's an Arduino DUE, let's specify that we prefer to use the second I2C bus (Wire1 instead of Wire) :
-    lcd.init(Wire1);
+    lcd.begin(Wire1);
   #else
     // not an Arduino DUE => by default, we use the main I2C bus (Wire) :
-    lcd.init(); 
+    lcd.begin(); 
   #endif
 
-  // Print a message to the LCD.
+  // Turn on the blacklight and print a message.
   lcd.backlight();
   lcd.setCursor(3,0);
   lcd.print("Hello, world!");
@@ -34,4 +32,5 @@ void setup()
 
 void loop()
 {
+  // Do nothing here...
 }

@@ -4,7 +4,7 @@
 #include <inttypes.h>
 #if defined(ARDUINO) && ARDUINO >= 100
 
-#include "Arduino.h"
+#include <Arduino.h>
 
 #define printIIC(args)	_i2c_bus.write(args)
 inline size_t LiquidCrystal_I2C::write(uint8_t value) {
@@ -13,7 +13,7 @@ inline size_t LiquidCrystal_I2C::write(uint8_t value) {
 }
 
 #else
-#include "WProgram.h"
+#include <WProgram.h>
 
 #define printIIC(args)	_i2c_bus.send(args)
 inline void LiquidCrystal_I2C::write(uint8_t value) {
@@ -21,7 +21,7 @@ inline void LiquidCrystal_I2C::write(uint8_t value) {
 }
 
 #endif
-#include "Wire.h"
+#include <Wire.h>
 
 
 
@@ -44,35 +44,37 @@ inline void LiquidCrystal_I2C::write(uint8_t value) {
 // can't assume that its in that state when a sketch starts (and the
 // LiquidCrystal constructor is called).
 
-LiquidCrystal_I2C::LiquidCrystal_I2C(uint8_t lcd_Addr,uint8_t lcd_cols,uint8_t lcd_rows)
+LiquidCrystal_I2C::LiquidCrystal_I2C(uint8_t lcd_addr,uint8_t lcd_cols,uint8_t lcd_rows, uint8_t charsize)
 {
-  _Addr = lcd_Addr;
+  _addr = lcd_addr;
   _cols = lcd_cols;
   _rows = lcd_rows;
+  _charsize = charsize;
   _backlightval = LCD_NOBACKLIGHT;
 }
 
 // Optional argument i2c_bus gives the opportunity to use Wire1 instead of Wire on the Arduino models that have two I2C buses (such as the Arduino DUE)
-void LiquidCrystal_I2C::init(TwoWire &i2c_bus){
+void LiquidCrystal_I2C::begin(TwoWire &i2c_bus) {
 	_i2c_bus = i2c_bus;
-	init_priv();
-}
-
-void LiquidCrystal_I2C::init_priv()
-{
 	_i2c_bus.begin();
 	_displayfunction = LCD_4BITMODE | LCD_1LINE | LCD_5x8DOTS;
-	begin(_cols, _rows);  
+	reset();
 }
-
-void LiquidCrystal_I2C::begin(uint8_t cols, uint8_t lines, uint8_t dotsize) {
-	if (lines > 1) {
+	
+void LiquidCrystal_I2C::reset(uint8_t cols, uint8_t lines, uint8_t dotsize) {
+	_cols = cols;
+	_rows = lines;
+	_charsize = dotsize;
+	reset();
+}
+	
+void LiquidCrystal_I2C::reset() {
+	if (_rows > 1) {
 		_displayfunction |= LCD_2LINE;
 	}
-	_numlines = lines;
 
 	// for some 1 line displays you can select a 10 pixel high font
-	if ((dotsize != 0) && (lines == 1)) {
+	if ((_charsize != 0) && (_rows == 1)) {
 		_displayfunction |= LCD_5x10DOTS;
 	}
 
@@ -104,7 +106,6 @@ void LiquidCrystal_I2C::begin(uint8_t cols, uint8_t lines, uint8_t dotsize) {
    // finally, set to 4-bit interface
    write4bits(0x02 << 4); 
 
-
 	// set # lines, font size, etc.
 	command(LCD_FUNCTIONSET | _displayfunction);  
 	
@@ -122,7 +123,6 @@ void LiquidCrystal_I2C::begin(uint8_t cols, uint8_t lines, uint8_t dotsize) {
 	command(LCD_ENTRYMODESET | _displaymode);
 	
 	home();
-  
 }
 
 /********** high level commands, for the user! */
@@ -138,8 +138,8 @@ void LiquidCrystal_I2C::home(){
 
 void LiquidCrystal_I2C::setCursor(uint8_t col, uint8_t row){
 	int row_offsets[] = { 0x00, 0x40, 0x14, 0x54 };
-	if ( row > _numlines ) {
-		row = _numlines-1;    // we count rows starting w/0
+	if ( row > _rows ) {
+		row = _rows-1;    // we count rows starting w/0
 	}
 	command(LCD_SETDDRAMADDR | (col + row_offsets[row]));
 }
@@ -216,6 +216,15 @@ void LiquidCrystal_I2C::createChar(uint8_t location, uint8_t charmap[]) {
 	}
 }
 
+//createChar with PROGMEM input
+void LiquidCrystal_I2C::createChar(uint8_t location, const char *charmap) {
+	location &= 0x7; // we only have 8 locations 0-7
+	command(LCD_SETCGRAMADDR | (location << 3));
+	for (int i=0; i<8; i++) {
+	    	write(pgm_read_byte_near(charmap++));
+	}
+}
+
 // Turn the (optional) backlight off/on
 void LiquidCrystal_I2C::noBacklight(void) {
 	_backlightval=LCD_NOBACKLIGHT;
@@ -226,8 +235,6 @@ void LiquidCrystal_I2C::backlight(void) {
 	_backlightval=LCD_BACKLIGHT;
 	expanderWrite(0);
 }
-
-
 
 /*********** mid level commands, for sending data/cmds */
 
@@ -252,7 +259,7 @@ void LiquidCrystal_I2C::write4bits(uint8_t value) {
 }
 
 void LiquidCrystal_I2C::expanderWrite(uint8_t _data){                                        
-	_i2c_bus.beginTransmission(_Addr);
+	_i2c_bus.beginTransmission(_addr);
 	printIIC((int)(_data) | _backlightval);
 	_i2c_bus.endTransmission();   
 }
