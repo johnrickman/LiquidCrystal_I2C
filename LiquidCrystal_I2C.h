@@ -91,7 +91,7 @@ public:
   void clear();
 
 	/**
-	 * Next print/write operation will will start from the first position on the LCD display.
+	 * Next print/write operation will start from the first position on the LCD display.
 	 */
   void home();
 
@@ -187,6 +187,7 @@ protected:
   uint8_t _rows;
   uint8_t _charsize;
   uint8_t _backlightval;
+  uint8_t _currentrow;
   TwoWire &_i2c_bus = Wire;
 };
 
