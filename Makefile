@@ -4,10 +4,10 @@
 # Date:			9. 5. 2017
 
 CC=g++
-I2C_DIRECTORY=./LiquidCrystal_I2C
-FLAGS=`sdl2-config --cflags --libs`
+I2C=./LiquidCrystal_I2C
 EXE=out
-FILENAME=main.cpp
+NAME=hello
+FILENAME=hello.cpp
 
-$(FILENAME): $(FILENAME) $(I2C_DIRECTORY)/LiquidCrystal_I2C.h $(I2C_DIRECTORY)/LiquidCrystal_I2C.cpp $(I2C_DIRECTORY)/Print_rpi.h $(I2C_DIRECTORY)/Print_rpi.cpp $(I2C_DIRECTORY)/Printable.h
-	$(CC) $(FILENAME) -o $(EXE) -I$(I2C_DIRECTORY) -lwiringPi -DWIRINGPI Print_rpi.cpp LiquidCrystal_I2C.cpp
+$(NAME): $(FILENAME) $(I2C)/LiquidCrystal_I2C.h $(I2C)/LiquidCrystal_I2C.cpp $(I2C)/Print_rpi.h $(I2C)/Print_rpi.cpp $(I2C)/Printable.h
+	$(CC) $(FILENAME) -o $(EXE) -I$(I2C) -lwiringPi -DWIRINGPI $(I2C)/Print_rpi.cpp $(I2C)/LiquidCrystal_I2C.cpp
