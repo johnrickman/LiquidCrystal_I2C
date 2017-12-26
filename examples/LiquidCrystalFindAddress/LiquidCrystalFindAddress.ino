@@ -31,7 +31,7 @@ void setup()
       sprintf(buff, "%02x", address);
       Serial.print("Address: ");
       Serial.println( buff );
-      lcd.addr( address ); // set the address
+      lcd.setAddress( address ); // set the address
       lcd.init();
       lcd.backlight();
       lcd.setCursor(0, 0);
