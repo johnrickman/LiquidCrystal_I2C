@@ -52,6 +52,11 @@ LiquidCrystal_I2C::LiquidCrystal_I2C(uint8_t lcd_Addr,uint8_t lcd_cols,uint8_t l
   _backlightval = LCD_NOBACKLIGHT;
 }
 
+void LiquidCrystal_I2C::oled_init(){
+  _oled = true;
+	init_priv();
+}
+
 void LiquidCrystal_I2C::init(){
 	init_priv();
 }
@@ -77,7 +82,8 @@ void LiquidCrystal_I2C::begin(uint8_t cols, uint8_t lines, uint8_t dotsize) {
 	// SEE PAGE 45/46 FOR INITIALIZATION SPECIFICATION!
 	// according to datasheet, we need at least 40ms after power rises above 2.7V
 	// before sending commands. Arduino can turn on way befer 4.5V so we'll wait 50
-	delay(50); 
+    if (_oled) delay(500);
+    else delay(50); 
   
 	// Now we pull both RS and R/W low to begin commands
 	expanderWrite(_backlightval);	// reset expanderand turn backlight off (Bit 8 =1)
@@ -127,6 +133,7 @@ void LiquidCrystal_I2C::begin(uint8_t cols, uint8_t lines, uint8_t dotsize) {
 void LiquidCrystal_I2C::clear(){
 	command(LCD_CLEARDISPLAY);// clear display, set cursor position to zero
 	delayMicroseconds(2000);  // this command takes a long time!
+  if (_oled) setCursor(0,0);
 }
 
 void LiquidCrystal_I2C::home(){
