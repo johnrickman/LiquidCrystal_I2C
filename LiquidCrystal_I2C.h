@@ -88,6 +88,7 @@ public:
 #endif
   void command(uint8_t);
   void init();
+  void oled_init();
 
 ////compatibility API function aliases
 void blink_on();						// alias for blink()
@@ -121,6 +122,7 @@ private:
   uint8_t _displaycontrol;
   uint8_t _displaymode;
   uint8_t _numlines;
+  bool _oled = false;
   uint8_t _cols;
   uint8_t _rows;
   uint8_t _backlightval;
