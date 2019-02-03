@@ -1,7 +1,8 @@
-# Project:		LiquidCrystal_I2C
+# Project:				LiquidCrystal_I2C
 # Project description:	LiquidCrystal Arduino/WiringPi library for I2C LCD displays
-# Author:		Jiří Vavřík
-# Date:			9. 5. 2017
+# Date:					3. 2. 2019
+
+#copy this file along with I2C folder with your project, modify names and you can easily compile your projects on Raspberry Pi!
 
 CC=g++
 I2C=./LiquidCrystal_I2C
