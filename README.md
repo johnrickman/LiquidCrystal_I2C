@@ -104,3 +104,5 @@ Based on previous work by:
 - Meridani
 - C. Thomas
 - P. Georges
+
+This repo is being transfered to [GitLab](https://gitlab.com/tandembyte/liquidcrystal_i2c)
