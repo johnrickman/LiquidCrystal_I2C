@@ -39,7 +39,7 @@ void setup()
   lcd.print("Hello world...");
   lcd.setCursor(0, 1);
   lcd.print(" i ");
-  lcd.printByte(3);
+  lcd.write(byte(3));
   lcd.print(" arduinos!");
   delay(5000);
   displayKeyCodes();
@@ -55,7 +55,7 @@ void displayKeyCodes(void) {
     lcd.print("-0x"); lcd.print(i+15, HEX);
     lcd.setCursor(0, 1);
     for (int j=0; j<16; j++) {
-      lcd.printByte(i+j);
+      lcd.write(byte(i+j));
     }
     i+=16;
     
