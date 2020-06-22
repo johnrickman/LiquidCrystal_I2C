@@ -1,4 +1,11 @@
 #include "LiquidCrystal_I2C.h"
+
+#if defined(ARDUINO) 
+    #include "ArduinoImpl.h"
+#else
+    #include "RPIImpl.h"
+#endif
+
 #include <inttypes.h>
 
 // When the display powers up, it is configured as follows:
@@ -26,6 +33,14 @@ LiquidCrystal_I2C::LiquidCrystal_I2C(uint8_t lcd_Addr,uint8_t lcd_cols,uint8_t l
     _cols = lcd_cols;
     _rows = lcd_rows;
     _backlightval = LCD_NOBACKLIGHT;
+
+// compile time factory to get proper implementation class
+
+#if defined(ARDUINO) 
+    _pImpl = new ArduinoImpl();
+#else
+    _pImpl = new RPIImpl();
+#endif
 }
 
 void LiquidCrystal_I2C::oled_init()
