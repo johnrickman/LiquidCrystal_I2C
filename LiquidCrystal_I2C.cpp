@@ -205,6 +205,7 @@ void LiquidCrystal_I2C::noAutoscroll(void)
     command(LCD_ENTRYMODESET | _displaymode);
 }
 
+#ifdef  ARDUINOIMPL
 // Allows us to fill the first 8 CGRAM locations
 // with custom characters
 void LiquidCrystal_I2C::createChar(uint8_t location, uint8_t charmap[]) 
@@ -225,6 +226,7 @@ void LiquidCrystal_I2C::createChar(uint8_t location, const char *charmap)
         write(pgm_read_byte_near(charmap++));
     }
 }
+#endif
 
 // Turn the (optional) backlight off/on
 void LiquidCrystal_I2C::noBacklight(void) 
@@ -265,9 +267,11 @@ void LiquidCrystal_I2C::write4bits(uint8_t value)
 
 void LiquidCrystal_I2C::expanderWrite(uint8_t _data)
 {                                        
+#if defined(ARDUINO)
     Wire.beginTransmission(_Addr);
     printIIC((int)(_data) | _backlightval);
     Wire.endTransmission();   
+#endif
 }
 
 void LiquidCrystal_I2C::pulseEnable(uint8_t _data){
@@ -314,10 +318,12 @@ void LiquidCrystal_I2C::setBacklight(uint8_t new_val)
     }
 }
 
+#if defined(ARDUINO)
 void LiquidCrystal_I2C::printstr(const char c[])
 {
     //This function is not identical to the function used for "real" I2C displays
     //it's here so the user sketch doesn't have to be changed 
     print(c);
 }
+#endif
 

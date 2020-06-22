@@ -3,6 +3,7 @@
 
 #include <time.h>
 #include <errno.h>  
+#include <cstdio>
 
 RPIImpl::RPIImpl()
 {
@@ -38,5 +39,32 @@ void RPIImpl::delayMicroseconds(uint32_t delay)
     do {
         res = nanosleep(&ts, &ts);
     } while (res && errno == EINTR);
+}
+
+void RPIImpl::createChar(uint8_t location, uint8_t charmap[])
+{
+#if defined(NOT_YET)
+    location &= 0x7; // we only have 8 locations 0-7
+    command(LCD_SETCGRAMADDR | (location << 3));
+    for (int i=0; i<8; i++) {
+        write(charmap[i]);
+    }
+#endif
+}
+
+void RPIImpl::createChar(uint8_t location, const char *charmap)
+{
+#if defined(NOT_YET)
+    location &= 0x7; // we only have 8 locations 0-7
+    command(LCD_SETCGRAMADDR | (location << 3));
+    for (int i=0; i<8; i++) {
+        write(pgm_read_byte_near(charmap++));
+    }
+#endif
+}
+
+void RPIImpl::printstr(const char c[])
+{
+    printf("%s\n", c);
 }
 

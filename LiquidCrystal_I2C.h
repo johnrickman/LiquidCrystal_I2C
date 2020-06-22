@@ -48,9 +48,9 @@
 #define LCD_BACKLIGHT 0x08
 #define LCD_NOBACKLIGHT 0x00
 
-#define En B00000100  // Enable bit
-#define Rw B00000010  // Read/Write bit
-#define Rs B00000001  // Register select bit
+#define En 0x04       // Enable bit B00000100  
+#define Rw 0x02       // Read/Write bit B00000010  
+#define Rs 0x01       // Register select bit B00000001  
 
 class LiquidCrystal_I2C { 
 public:
