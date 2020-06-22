@@ -1,5 +1,11 @@
 # LiquidCrystal_I2C
 
-LiquidCrystal Arduino library for I2C LCD displays
+Portable LiquidCrystal C++ library for I2C LCD displays, with implementations
+for both Arduino and RPI (RPI should work with any modern Linux device that 
+supports I2C).
 
-This repo is being transfered to GitLab at https://gitlab.com/tandembyte/liquidcrystal_i2c
+Linux Instructions
+
+autoreconf --install
+./configure
+make
