@@ -61,6 +61,16 @@ void ArduinoImpl::init()
     init_priv();
 }
 
+void ArduinoImpl::delayMilliseconds(uint32_t delay)
+{
+    delay(delay);
+}
+
+void ArduinoImpl::delayMicroseconds(uint32_t delay)
+{
+    delayMicroseconds(delay);
+}
+
 void ArduinoImpl::init_priv()
 {
     Wire.begin();
