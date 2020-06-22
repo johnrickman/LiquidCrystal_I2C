@@ -1,5 +1,5 @@
-#ifndef LiquidCrystal_I2C_Base_h
-#define LiquidCrystal_I2C_Base_h
+#ifndef _ARDUINOIMPL_H_
+#define _ARDUINOIMPL_H_
 
 #include <inttypes.h>
 
@@ -50,9 +50,10 @@
 #define Rw B00000010  // Read/Write bit
 #define Rs B00000001  // Register select bit
 
-class LiquidCrystal_I2C_Base { 
+class class ArduinoImpl : public LCI2CImpl { 
 public:
-    LiquidCrystal_I2C(uint8_t lcd_Addr,uint8_t lcd_cols,uint8_t lcd_rows);
+    ArduinoImpl(uint8_t lcd_Addr,uint8_t lcd_cols,uint8_t lcd_rows);
+    virtual ~ArduinoImpl() {};
     void begin(uint8_t cols, uint8_t rows, uint8_t charsize = LCD_5x8DOTS );
     void clear();
     void home();
@@ -91,19 +92,6 @@ public:
     void setBacklight(uint8_t new_val);	// alias for backlight() and nobacklight()
     void load_custom_character(uint8_t char_num, uint8_t *rows); // alias for createChar()
     void printstr(const char[]);
-
-#if 0
-////Unsupported API functions (not implemented in this library)
-uint8_t status();
-void setContrast(uint8_t new_val);
-uint8_t keypad();
-void setDelay(int,int);
-void on();
-void off();
-uint8_t init_bargraph(uint8_t graphtype);
-void draw_horizontal_graph(uint8_t row, uint8_t column, uint8_t len,  uint8_t pixel_col_end);
-void draw_vertical_graph(uint8_t row, uint8_t column, uint8_t len,  uint8_t pixel_col_end);
-#endif
 
 private:
     void init_priv();

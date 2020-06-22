@@ -1,5 +1,5 @@
-#ifndef LiquidCrystal_I2C_Base_h
-#define LiquidCrystal_I2C_Base_h
+#ifndef _LCI2CIMPL_H_
+#define _LCI2CIMPL_H_
 
 #include <inttypes.h>
 
@@ -50,10 +50,11 @@
 #define Rw B00000010  // Read/Write bit
 #define Rs B00000001  // Register select bit
 
-class LiquidCrystal_I2C_Base { 
+class LCI2CImpl { 
 public:
-    LiquidCrystal_I2C(uint8_t lcd_Addr,uint8_t lcd_cols,uint8_t lcd_rows);
-    void begin(uint8_t cols, uint8_t rows, uint8_t charsize = LCD_5x8DOTS );
+    LCI2CImpl(uint8_t lcd_Addr,uint8_t lcd_cols,uint8_t lcd_rows);
+    virtual ~LCI2CImpl() {};
+    void begin(uint8_t cols, uint8_t rows, uint8_t charsize = LCD_5x8DOTS);
     void clear();
     void home();
     void noDisplay();
@@ -79,7 +80,7 @@ public:
   // Example: 	const char bell[8] PROGMEM = {B00100,B01110,B01110,B01110,B11111,B00000,B00100,B00000};
   
     void setCursor(uint8_t, uint8_t); 
-    virtual void write(uint8_t);
+    void write(uint8_t);
     void command(uint8_t);
     void init();
     void oled_init();
@@ -91,19 +92,6 @@ public:
     void setBacklight(uint8_t new_val);	// alias for backlight() and nobacklight()
     void load_custom_character(uint8_t char_num, uint8_t *rows); // alias for createChar()
     void printstr(const char[]);
-
-#if 0
-////Unsupported API functions (not implemented in this library)
-uint8_t status();
-void setContrast(uint8_t new_val);
-uint8_t keypad();
-void setDelay(int,int);
-void on();
-void off();
-uint8_t init_bargraph(uint8_t graphtype);
-void draw_horizontal_graph(uint8_t row, uint8_t column, uint8_t len,  uint8_t pixel_col_end);
-void draw_vertical_graph(uint8_t row, uint8_t column, uint8_t len,  uint8_t pixel_col_end);
-#endif
 
 private:
     void init_priv();
