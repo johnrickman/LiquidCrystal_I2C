@@ -6,6 +6,8 @@ supports I2C).
 
 Linux Instructions
 
-autoreconf --install
-./configure
-make
+Native RPI (Raspbian)
+
+$ autoreconf --install
+$ ./configure
+$ make
