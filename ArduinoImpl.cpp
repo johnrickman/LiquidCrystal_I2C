@@ -42,14 +42,11 @@ inline void LiquidCrystal_I2C::write(uint8_t value) {
 // can't assume that its in that state when a sketch starts (and the
 // LiquidCrystal constructor is called).
 
-ArduinoImpl::ArduinoImpl(uint8_t lcd_Addr,uint8_t lcd_cols,uint8_t lcd_rows)
+ArduinoImpl::ArduinoImpl()
 {
-    _Addr = lcd_Addr;
-    _cols = lcd_cols;
-    _rows = lcd_rows;
-    _backlightval = LCD_NOBACKLIGHT;
 }
 
+#if defined(NOT_YET) 
 void ArduinoImpl::oled_init()
 {
     _oled = true;
@@ -60,6 +57,7 @@ void ArduinoImpl::init()
 {
     init_priv();
 }
+#endif
 
 void ArduinoImpl::delayMilliseconds(uint32_t delay)
 {
@@ -70,6 +68,8 @@ void ArduinoImpl::delayMicroseconds(uint32_t delay)
 {
     delayMicroseconds(delay);
 }
+
+#if defined(NOT_YET)
 
 void ArduinoImpl::init_priv()
 {
@@ -245,6 +245,8 @@ void ArduinoImpl::noAutoscroll(void)
     command(LCD_ENTRYMODESET | _displaymode);
 }
 
+#endif // NOT_YET
+
 // Allows us to fill the first 8 CGRAM locations
 // with custom characters
 void ArduinoImpl::createChar(uint8_t location, uint8_t charmap[]) 
@@ -265,6 +267,8 @@ void ArduinoImpl::createChar(uint8_t location, const char *charmap)
         write(pgm_read_byte_near(charmap++));
     }
 }
+
+#if defined(NOT_YET)
 
 // Turn the (optional) backlight off/on
 void ArduinoImpl::noBacklight(void) 
@@ -355,6 +359,8 @@ void ArduinoImpl::setBacklight(uint8_t new_val)
         noBacklight();		// turn backlight off
     }
 }
+
+#endif // NOT_YET
 
 void ArduinoImpl::printstr(const char c[])
 {
