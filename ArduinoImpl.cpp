@@ -1,27 +1,5 @@
 #include "ArduinoImpl.h"
 #include <inttypes.h>
-#if defined(ARDUINO) && ARDUINO >= 100
-
-#include "Arduino.h"
-
-#define printIIC(args)	Wire.write(args)
-inline size_t LiquidCrystal_I2C::write(uint8_t value) {
-	send(value, Rs);
-	return 1;
-}
-
-#else
-#include "WProgram.h"
-
-#define printIIC(args)	Wire.send(args)
-inline void LiquidCrystal_I2C::write(uint8_t value) {
-	send(value, Rs);
-}
-
-#endif
-#include "Wire.h"
-
-
 
 // When the display powers up, it is configured as follows:
 //
@@ -59,14 +37,14 @@ void ArduinoImpl::init()
 }
 #endif
 
-void ArduinoImpl::delayMilliseconds(uint32_t delay)
+void ArduinoImpl::delayMilliseconds(uint32_t val)
 {
-    delay(delay);
+    delay(val);
 }
 
-void ArduinoImpl::delayMicroseconds(uint32_t delay)
+void ArduinoImpl::delayMicroseconds(uint32_t val)
 {
-    delayMicroseconds(delay);
+    delayMicroseconds(val);
 }
 
 #if defined(NOT_YET)
@@ -367,5 +345,45 @@ void ArduinoImpl::printstr(const char c[])
     //This function is not identical to the function used for "real" I2C displays
     //it's here so the user sketch doesn't have to be changed 
     print(c);
+}
+
+size_t ArduinoImpl::print(const char arg1[])
+{
+    return 0;
+}
+
+size_t ArduinoImpl::print(char arg1)
+{
+    return 0;
+}
+
+size_t ArduinoImpl::print(unsigned char arg1, int arg2)
+{
+    return 0;
+}
+
+size_t ArduinoImpl::print(int arg1, int arg2)
+{
+    return 0;
+}
+
+size_t ArduinoImpl::print(unsigned int arg1, int arg2)
+{
+    return 0;
+}
+
+size_t ArduinoImpl::print(unsigned long arg1, int arg2)
+{
+    return 0;
+}
+
+size_t ArduinoImpl::print(long arg1, int arg2)
+{
+    return 0;
+}
+
+size_t ArduinoImpl::print(double arg1, int arg2)
+{
+    return 0;
 }
 

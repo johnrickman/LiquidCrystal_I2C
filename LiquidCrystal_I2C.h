@@ -93,6 +93,14 @@ public:
     void setBacklight(uint8_t new_val);	// alias for backlight() and nobacklight()
     void load_custom_character(uint8_t char_num, uint8_t *rows); // alias for createChar()
     void printstr(const char[]);
+    size_t print(const char arg1[]);
+    size_t print(char arg1);
+    size_t print(unsigned char arg1, int arg2);
+    size_t print(int arg1, int arg2);
+    size_t print(unsigned int arg1, int arg2);
+    size_t print(long arg1, int arg2);
+    size_t print(unsigned long arg1, int arg2);
+    size_t print(double arg1, int arg2 = 2);
 
 private:
     LCI2CImpl *_pImpl;

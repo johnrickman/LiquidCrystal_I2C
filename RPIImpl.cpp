@@ -1,9 +1,11 @@
+#if !defined(ARDUINO) 
+
 #include "RPIImpl.h"
 #include <inttypes.h>
 
 #include <time.h>
 #include <errno.h>  
-#include <cstdio>
+#include <stdio.h>
 
 RPIImpl::RPIImpl()
 {
@@ -68,3 +70,43 @@ void RPIImpl::printstr(const char c[])
     printf("%s\n", c);
 }
 
+size_t RPIImpl::print(const char[] arg1)
+{
+    return 0;
+}
+
+size_t RPIImpl::print(char arg1)
+{
+    return 0;
+}
+
+size_t RPIImpl::print(unsigned char arg1, int arg2)
+{
+    return 0;
+}
+
+size_t RPIImpl::print(int arg1, int arg2)
+{
+    return 0;
+}
+
+size_t RPIImpl::print(unsigned int arg1, int arg2)
+{
+    return 0;
+}
+
+size_t RPIImpl::print(long arg1, int arg2)
+{
+    return 0;
+}
+
+size_t RPIImpl::print(unsigned long arg1, int arg2)
+{
+    return 0;
+}
+
+size_t RPIImpl::print(double arg1, int arg2 = 2)
+{
+    return 0;
+}
+#endif // !ARDUINO

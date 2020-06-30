@@ -333,12 +333,49 @@ void LiquidCrystal_I2C::setBacklight(uint8_t new_val)
     }
 }
 
-#if defined(ARDUINO)
 void LiquidCrystal_I2C::printstr(const char c[])
 {
     //This function is not identical to the function used for "real" I2C displays
     //it's here so the user sketch doesn't have to be changed 
-    print(c);
+    _pImpl->printstr(c);
 }
-#endif
 
+size_t LiquidCrystal_I2C::print(const char arg1[])
+{
+    return _pImpl->print(arg1);
+}
+
+size_t LiquidCrystal_I2C::print(char arg1)
+{
+    return _pImpl->print(arg1);
+}
+
+size_t LiquidCrystal_I2C::print(unsigned char arg1, int arg2)
+{
+    return _pImpl->print(arg1, arg2);
+}
+
+size_t LiquidCrystal_I2C::print(int arg1, int arg2) 
+{
+    return _pImpl->print(arg1, arg2);
+}
+
+size_t LiquidCrystal_I2C::print(unsigned int arg1, int arg2)
+{
+    return _pImpl->print(arg1, arg2);
+}
+
+size_t LiquidCrystal_I2C::print(long arg1, int arg2)
+{
+    return _pImpl->print(arg1, arg2);
+}
+
+size_t LiquidCrystal_I2C::print(unsigned long arg1, int arg2)
+{
+    return _pImpl->print(arg1, arg2);
+}
+
+size_t LiquidCrystal_I2C::print(double arg1, int arg2)
+{
+    return _pImpl->print(arg1, arg2);
+}
