@@ -7,8 +7,12 @@
 #include <errno.h>  
 #include <stdio.h>
 
-RPIImpl::RPIImpl()
+RPIImpl::RPIImpl(uint8_t lcd_Addr,uint8_t lcd_cols,uint8_t lcd_rows)
 {
+    _Addr = lcd_Addr;
+    _cols = lcd_cols;
+    _rows = lcd_rows;
+    _backlightval = LCD_NOBACKLIGHT;
 }
 
 void RPIImpl::delayMilliseconds(uint32_t delay)
@@ -43,70 +47,26 @@ void RPIImpl::delayMicroseconds(uint32_t delay)
     } while (res && errno == EINTR);
 }
 
-void RPIImpl::createChar(uint8_t location, uint8_t charmap[])
+void ArduinoImpl::setBacklightVal(uint8_t val)
+{
+    _backlightval = val;
+}
+
+void ArduinoImpl::init_priv()
 {
 #if defined(NOT_YET)
-    location &= 0x7; // we only have 8 locations 0-7
-    command(LCD_SETCGRAMADDR | (location << 3));
-    for (int i=0; i<8; i++) {
-        write(charmap[i]);
-    }
+    Serial.print("ArduinoImpl::init_priv\n");
+    Wire.begin();
 #endif
 }
 
-void RPIImpl::createChar(uint8_t location, const char *charmap)
+void ArduinoImpl::expanderWrite(uint8_t _data)
 {
 #if defined(NOT_YET)
-    location &= 0x7; // we only have 8 locations 0-7
-    command(LCD_SETCGRAMADDR | (location << 3));
-    for (int i=0; i<8; i++) {
-        write(pgm_read_byte_near(charmap++));
-    }
+    Wire.beginTransmission(_Addr);
+    printIIC((int)(_data) | _backlightval);
+    Wire.endTransmission();
 #endif
 }
 
-void RPIImpl::printstr(const char c[])
-{
-    printf("%s\n", c);
-}
-
-size_t RPIImpl::print(const char[] arg1)
-{
-    return 0;
-}
-
-size_t RPIImpl::print(char arg1)
-{
-    return 0;
-}
-
-size_t RPIImpl::print(unsigned char arg1, int arg2)
-{
-    return 0;
-}
-
-size_t RPIImpl::print(int arg1, int arg2)
-{
-    return 0;
-}
-
-size_t RPIImpl::print(unsigned int arg1, int arg2)
-{
-    return 0;
-}
-
-size_t RPIImpl::print(long arg1, int arg2)
-{
-    return 0;
-}
-
-size_t RPIImpl::print(unsigned long arg1, int arg2)
-{
-    return 0;
-}
-
-size_t RPIImpl::print(double arg1, int arg2 = 2)
-{
-    return 0;
-}
 #endif // !ARDUINO

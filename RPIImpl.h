@@ -4,25 +4,24 @@
 #if !defined(ARDUINO)
 #include "LCI2CImpl.h"
 
+#define BIN 2 
+#define OCT 8
+#define HEX 16
+
 class RPIImpl : public LCI2CImpl { 
 public:
-    RPIImpl();
+    RPIImpl(uint8_t lcd_Addr,uint8_t lcd_cols,uint8_t lcd_rows);
     virtual ~RPIImpl() {};
-    virtual void delayMilliseconds(uint32_t delay);
-    virtual void delayMicroseconds(uint32_t delay);
-    virtual void createChar(uint8_t location, uint8_t charmap[]);
-    virtual void createChar(uint8_t location, const char *charmap);
-    virtual void printstr(const char c[]);
-
-    virtual size_t print(const char arg1[]);
-    virtual size_t print(char arg1);
-    virtual size_t print(unsigned char arg1, int arg2);
-    virtual size_t print(int arg1, int arg2);
-    virtual size_t print(unsigned int arg1);
-    virtual size_t print(long arg1, int arg2);
-    virtual size_t print(unsigned int arg1, int arg2);
-    virtual size_t print(unsigned long arg1, int arg2);
-    virtual size_t print(double arg1, int arg2 = 2);
+    virtual void init_priv();
+    virtual void setBacklightVal(uint8_t val);
+    virtual void delayMilliseconds(uint32_t val);
+    virtual void delayMicroseconds(uint32_t val);
+    virtual void expanderWrite(uint8_t _data);
+private:
+    uint8_t _Addr;
+    uint8_t _cols;
+    uint8_t _rows;
+    uint8_t _backlightval;
 };
 
 #endif // !ARDUINO

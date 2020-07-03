@@ -37,10 +37,16 @@ LiquidCrystal_I2C::LiquidCrystal_I2C(uint8_t lcd_Addr,uint8_t lcd_cols,uint8_t l
 // compile time factory to get proper implementation class
 
 #if defined(ARDUINO) 
-    _pImpl = new ArduinoImpl();
+    _pImpl = new ArduinoImpl(lcd_Addr, lcd_cols, lcd_rows);
 #else
-    _pImpl = new RPIImpl();
+    _pImpl = new RPIImpl(lcd_Addr, lcd_cols, lcd_rows);
 #endif
+    _pImpl->setBacklightVal(_backlightval);
+}
+
+void LiquidCrystal_I2C::write(uint8_t value) 
+{
+    send(value, Rs);
 }
 
 void LiquidCrystal_I2C::oled_init()
@@ -52,6 +58,13 @@ void LiquidCrystal_I2C::oled_init()
 void LiquidCrystal_I2C::init()
 {
     init_priv();
+}
+
+void LiquidCrystal_I2C::init_priv()
+{
+    _pImpl->init_priv(); // Wire.begin() on arduino;
+    _displayfunction = LCD_4BITMODE | LCD_1LINE | LCD_5x8DOTS;
+    begin(_cols, _rows);
 }
 
 void LiquidCrystal_I2C::begin(uint8_t cols, uint8_t lines, uint8_t dotsize) 
@@ -220,7 +233,6 @@ void LiquidCrystal_I2C::noAutoscroll(void)
     command(LCD_ENTRYMODESET | _displaymode);
 }
 
-#ifdef  ARDUINOIMPL
 // Allows us to fill the first 8 CGRAM locations
 // with custom characters
 void LiquidCrystal_I2C::createChar(uint8_t location, uint8_t charmap[]) 
@@ -241,18 +253,19 @@ void LiquidCrystal_I2C::createChar(uint8_t location, const char *charmap)
         write(pgm_read_byte_near(charmap++));
     }
 }
-#endif
 
 // Turn the (optional) backlight off/on
 void LiquidCrystal_I2C::noBacklight(void) 
 {
     _backlightval=LCD_NOBACKLIGHT;
+    _pImpl->setBacklightVal(_backlightval);
     expanderWrite(0);
 }
 
 void LiquidCrystal_I2C::backlight(void) 
 {
     _backlightval=LCD_BACKLIGHT;
+    _pImpl->setBacklightVal(_backlightval);
     expanderWrite(0);
 }
 
@@ -282,17 +295,12 @@ void LiquidCrystal_I2C::write4bits(uint8_t value)
 
 void LiquidCrystal_I2C::expanderWrite(uint8_t _data)
 {                                        
-#if defined(ARDUINO)
-    Wire.beginTransmission(_Addr);
-    printIIC((int)(_data) | _backlightval);
-    Wire.endTransmission();   
-#endif
+    _pImpl->expanderWrite(_data);
 }
 
 void LiquidCrystal_I2C::pulseEnable(uint8_t _data){
     expanderWrite(_data | En);	// En high
     _pImpl->delayMicroseconds(1);		// enable pulse must be >450ns
-	
     expanderWrite(_data & ~En);	// En low
     _pImpl->delayMicroseconds(50);		// commands need > 37us to settle
 } 
@@ -337,45 +345,68 @@ void LiquidCrystal_I2C::printstr(const char c[])
 {
     //This function is not identical to the function used for "real" I2C displays
     //it's here so the user sketch doesn't have to be changed 
-    _pImpl->printstr(c);
+    print(c);
 }
+
+// replace the Arduino implemented Print with our own 
 
 size_t LiquidCrystal_I2C::print(const char arg1[])
 {
-    return _pImpl->print(arg1);
+    for (int i = 0; i < strlen(arg1); i++) {
+        print(arg1[i]);
+    }
+    return strlen(arg1);
 }
 
 size_t LiquidCrystal_I2C::print(char arg1)
 {
-    return _pImpl->print(arg1);
+    write(arg1);
+    return 1;
 }
 
-size_t LiquidCrystal_I2C::print(unsigned char arg1, int arg2)
+size_t LiquidCrystal_I2C::print(unsigned char arg1, int base)
 {
-    return _pImpl->print(arg1, arg2);
+    return print(((int) arg1) & 0xff, base);
 }
 
-size_t LiquidCrystal_I2C::print(int arg1, int arg2) 
+size_t LiquidCrystal_I2C::print(int arg1, int base) 
 {
-    return _pImpl->print(arg1, arg2);
+    // XXX this works if value is not negative
+
+    return print(((unsigned int) arg1) & 0xff, base);
 }
 
-size_t LiquidCrystal_I2C::print(unsigned int arg1, int arg2)
+size_t LiquidCrystal_I2C::print(unsigned int arg1, int base)
 {
-    return _pImpl->print(arg1, arg2);
+    char buf[4];
+    char format[4];
+
+    if (base == HEX) {
+        strcpy(format, "%x");
+    } else {
+        strcpy(format, "%o");
+    }
+    snprintf(buf, sizeof(buf), format, arg1);
+    for (int i = 0; i < strlen(buf); i++) {
+        print(buf[i]);
+    }
+    return strlen(buf);
 }
 
-size_t LiquidCrystal_I2C::print(long arg1, int arg2)
+size_t LiquidCrystal_I2C::print(long arg1, int base)
 {
-    return _pImpl->print(arg1, arg2);
+    // TBD
+    return 0;
 }
 
-size_t LiquidCrystal_I2C::print(unsigned long arg1, int arg2)
+size_t LiquidCrystal_I2C::print(unsigned long arg1, int base)
 {
-    return _pImpl->print(arg1, arg2);
+    // TBD
+    return 0;
 }
 
-size_t LiquidCrystal_I2C::print(double arg1, int arg2)
+size_t LiquidCrystal_I2C::print(double arg1, int base)
 {
-    return _pImpl->print(arg1, arg2);
+    // TBD
+    return 0;
 }
