@@ -7,6 +7,8 @@
 #endif
 
 #include <inttypes.h>
+#include <stdio.h>
+#include <string.h>
 
 // When the display powers up, it is configured as follows:
 //
@@ -237,7 +239,6 @@ void LiquidCrystal_I2C::noAutoscroll(void)
 // with custom characters
 void LiquidCrystal_I2C::createChar(uint8_t location, uint8_t charmap[]) 
 {
-    Serial.print("createChar 1\n");
     location &= 0x7; // we only have 8 locations 0-7
     command(LCD_SETCGRAMADDR | (location << 3));
     for (int i=0; i<8; i++) {
