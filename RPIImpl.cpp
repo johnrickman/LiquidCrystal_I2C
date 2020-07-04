@@ -2,6 +2,7 @@
 
 #include "RPIImpl.h"
 #include <inttypes.h>
+#include "LiquidCrystal_I2C.h"
 
 #include <time.h>
 #include <errno.h>  
@@ -47,12 +48,12 @@ void RPIImpl::delayMicroseconds(uint32_t delay)
     } while (res && errno == EINTR);
 }
 
-void ArduinoImpl::setBacklightVal(uint8_t val)
+void RPIImpl::setBacklightVal(uint8_t val)
 {
     _backlightval = val;
 }
 
-void ArduinoImpl::init_priv()
+void RPIImpl::init_priv()
 {
 #if defined(NOT_YET)
     Serial.print("ArduinoImpl::init_priv\n");
@@ -60,7 +61,7 @@ void ArduinoImpl::init_priv()
 #endif
 }
 
-void ArduinoImpl::expanderWrite(uint8_t _data)
+void RPIImpl::expanderWrite(uint8_t _data)
 {
 #if defined(NOT_YET)
     Wire.beginTransmission(_Addr);
