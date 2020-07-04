@@ -73,7 +73,7 @@ void RPIImpl::delayMicroseconds(uint32_t delay)
     int res;
 
     ts.tv_sec = delay / 1000000;
-    ts.tv_nsec = (delay % 1000000) * 1000000000;
+    ts.tv_nsec = (delay % 1000000) * 1000;
 
     do {
         res = nanosleep(&ts, &ts);
@@ -87,16 +87,24 @@ void RPIImpl::setBacklightVal(uint8_t val)
 
 void RPIImpl::init_priv()
 {
+#if !defined(ARDUINO)
+    fprintf(stderr, "%s enter\n", __FUNCTION__);
+#endif
     char filename[20];
 
     snprintf(filename, sizeof(filename), "/dev/i2c-%d", _adapter);
     _fd = open(filename, O_RDWR);
     if (_fd < 0) {
-        /* ERROR HANDLING; you can check errno to see what went wrong */
+#if !defined(ARDUINO)
+        fprintf(stderr, "unable to open %s, errno is %d\n", filename, errno);
+#endif
     }
  
     if (ioctl(_fd, I2C_SLAVE, _Addr) < 0) {
-        /* ERROR HANDLING; you can check errno to see what went wrong */
+#if !defined(ARDUINO)
+        fprintf(stderr, "ioctl failed for fd %d and addr %d, errno is %d\n",
+_fd, _Addr, errno);
+#endif
     }
 #if defined(NOT_YET)
     Serial.print("ArduinoImpl::init_priv\n");
@@ -106,8 +114,17 @@ void RPIImpl::init_priv()
 
 void RPIImpl::expanderWrite(uint8_t data)
 {
+#if !defined(ARDUINO) && 0
+    fprintf(stderr, "%s enter fd is %d\n", __FUNCTION__, _fd);
+#endif
     if (_fd >= 0) {
-        (void) write(_fd, (char *) &data, sizeof(data));
+        data |= _backlightval;
+        int ret = write(_fd, (char *) &data, sizeof(data));
+        if (ret < 0) {
+#if !defined(ARDUINO) 
+            fprintf(stderr, "write failed for fd %d, errno is %d\n", _fd, errno);
+#endif
+        }
     }
 #if defined(NOT_YET)
     Wire.beginTransmission(_Addr);

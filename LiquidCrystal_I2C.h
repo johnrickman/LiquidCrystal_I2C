@@ -99,7 +99,7 @@ uint8_t lcd_adapter);
     void command(uint8_t);
     void init();
     void oled_init();
-
+    void delay(int ms);
     void blink_on();    // alias for blink()
     void blink_off();   // alias for noBlink()
     void cursor_on();   // alias for cursor()

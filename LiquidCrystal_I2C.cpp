@@ -158,6 +158,11 @@ void LiquidCrystal_I2C::clear()
     }
 }
 
+void LiquidCrystal_I2C::delay(int ms)
+{
+    _pImpl->delayMilliseconds(ms);
+}
+
 void LiquidCrystal_I2C::home()
 {
     command(LCD_RETURNHOME);  // set cursor position to zero
