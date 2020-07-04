@@ -14,13 +14,17 @@ Linux Instructions
 
 Native RPI (Raspbian)
 
-'''
+```
 $ autoreconf --install
 $ ./configure
 $ sudo make install
-'''
+```
 
-cd examples/CustomChars
+The build examples:
+
+``
+$ cd examples/CustomChars
+```
 
 Follow steps in README.txt (you can execute the README in bash from command
 line as well).
