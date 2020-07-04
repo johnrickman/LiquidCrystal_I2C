@@ -22,7 +22,7 @@ $ sudo make install
 
 The build examples:
 
-``
+```
 $ cd examples/CustomChars
 ```
 
