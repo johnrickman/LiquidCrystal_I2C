@@ -1,10 +1,9 @@
-//YWROBOT
 #ifndef LiquidCrystal_I2C_h
 #define LiquidCrystal_I2C_h
 
 #include <inttypes.h>
-#include "Print.h" 
-#include <Wire.h>
+
+#include "LCI2CImpl.h"
 
 // commands
 #define LCD_CLEARDISPLAY 0x01
@@ -21,6 +20,16 @@
 #define LCD_ENTRYLEFT 0x02
 #define LCD_ENTRYSHIFTINCREMENT 0x01
 #define LCD_ENTRYSHIFTDECREMENT 0x00
+
+#if !defined(BIN)
+#define BIN 2 
+#endif
+#if !defined(OCT)
+#define OCT 8
+#endif
+#if !defined(HEX)
+#define HEX 16
+#endif
 
 // flags for display on/off control
 #define LCD_DISPLAYON 0x04
@@ -40,6 +49,7 @@
 #define LCD_8BITMODE 0x10
 #define LCD_4BITMODE 0x00
 #define LCD_2LINE 0x08
+
 #define LCD_1LINE 0x00
 #define LCD_5x10DOTS 0x04
 #define LCD_5x8DOTS 0x00
@@ -48,84 +58,82 @@
 #define LCD_BACKLIGHT 0x08
 #define LCD_NOBACKLIGHT 0x00
 
-#define En B00000100  // Enable bit
-#define Rw B00000010  // Read/Write bit
-#define Rs B00000001  // Register select bit
+#define En 0x04       // Enable bit B00000100  
+#define Rw 0x02       // Read/Write bit B00000010  
+#define Rs 0x01       // Register select bit B00000001  
 
-class LiquidCrystal_I2C : public Print {
+class LiquidCrystal_I2C { 
 public:
-  LiquidCrystal_I2C(uint8_t lcd_Addr,uint8_t lcd_cols,uint8_t lcd_rows);
-  void begin(uint8_t cols, uint8_t rows, uint8_t charsize = LCD_5x8DOTS );
-  void clear();
-  void home();
-  void noDisplay();
-  void display();
-  void noBlink();
-  void blink();
-  void noCursor();
-  void cursor();
-  void scrollDisplayLeft();
-  void scrollDisplayRight();
-  void printLeft();
-  void printRight();
-  void leftToRight();
-  void rightToLeft();
-  void shiftIncrement();
-  void shiftDecrement();
-  void noBacklight();
-  void backlight();
-  void autoscroll();
-  void noAutoscroll(); 
-  void createChar(uint8_t, uint8_t[]);
-  void createChar(uint8_t location, const char *charmap);
+    LiquidCrystal_I2C(uint8_t lcd_Addr,uint8_t lcd_cols,uint8_t lcd_rows);
+    LiquidCrystal_I2C(uint8_t lcd_Addr,uint8_t lcd_cols,uint8_t lcd_rows,
+uint8_t lcd_adapter);
+    void begin(uint8_t cols, uint8_t rows, uint8_t charsize = LCD_5x8DOTS);
+    void clear();
+    void home();
+    void noDisplay();
+    void display();
+    void noBlink();
+    void blink();
+    void noCursor();
+    void cursor();
+    void scrollDisplayLeft();
+    void scrollDisplayRight();
+    void printLeft();
+    void printRight();
+    void leftToRight();
+    void rightToLeft();
+    void shiftIncrement();
+    void shiftDecrement();
+    void noBacklight();
+    void backlight();
+    void autoscroll();
+    void noAutoscroll(); 
+    void createChar(uint8_t, uint8_t[]);
+#if 0
+    void createChar(uint8_t location, const char *charmap);
   // Example: 	const char bell[8] PROGMEM = {B00100,B01110,B01110,B01110,B11111,B00000,B00100,B00000};
-  
-  void setCursor(uint8_t, uint8_t); 
-#if defined(ARDUINO) && ARDUINO >= 100
-  virtual size_t write(uint8_t);
-#else
-  virtual void write(uint8_t);
 #endif
-  void command(uint8_t);
-  void init();
-  void oled_init();
-
-////compatibility API function aliases
-void blink_on();						// alias for blink()
-void blink_off();       					// alias for noBlink()
-void cursor_on();      	 					// alias for cursor()
-void cursor_off();      					// alias for noCursor()
-void setBacklight(uint8_t new_val);				// alias for backlight() and nobacklight()
-void load_custom_character(uint8_t char_num, uint8_t *rows);	// alias for createChar()
-void printstr(const char[]);
-
-////Unsupported API functions (not implemented in this library)
-uint8_t status();
-void setContrast(uint8_t new_val);
-uint8_t keypad();
-void setDelay(int,int);
-void on();
-void off();
-uint8_t init_bargraph(uint8_t graphtype);
-void draw_horizontal_graph(uint8_t row, uint8_t column, uint8_t len,  uint8_t pixel_col_end);
-void draw_vertical_graph(uint8_t row, uint8_t column, uint8_t len,  uint8_t pixel_col_end);
-	 
+  
+    void setCursor(uint8_t, uint8_t); 
+    void write(uint8_t);
+    void command(uint8_t);
+    void init();
+    void oled_init();
+    void delay(int ms);
+    void blink_on();    // alias for blink()
+    void blink_off();   // alias for noBlink()
+    void cursor_on();   // alias for cursor()
+    void cursor_off();  // alias for noCursor()
+    void setBacklight(uint8_t new_val);	// alias for backlight() and nobacklight()
+    void load_custom_character(uint8_t char_num, uint8_t *rows); // alias for createChar()
+    void printstr(const char[]);
+    size_t print(const char arg1[]);
+    size_t print(char arg1);
+    size_t print(unsigned char arg1, int arg2);
+    size_t print(int arg1, int arg2);
+    size_t print(unsigned int arg1, int arg2);
+    size_t print(long arg1, int arg2);
+    size_t print(unsigned long arg1, int arg2);
+    size_t print(double arg1, int arg2 = 2);
 
 private:
-  void init_priv();
-  void send(uint8_t, uint8_t);
-  void write4bits(uint8_t);
-  void expanderWrite(uint8_t);
-  void pulseEnable(uint8_t);
-  uint8_t _Addr;
-  uint8_t _displayfunction;
-  uint8_t _displaycontrol;
-  uint8_t _displaymode;
-  uint8_t _numlines;
-  bool _oled = false;
-  uint8_t _cols;
-  uint8_t _rows;
-  uint8_t _backlightval;
+    void createDevice();
+    void init_priv();
+    void send(uint8_t, uint8_t);
+    void write4bits(uint8_t);
+    void expanderWrite(uint8_t);
+    void pulseEnable(uint8_t);
+    LCI2CImpl *_pImpl;
+    uint8_t _Addr;
+    uint8_t _adapter;
+    uint8_t _displayfunction;
+    uint8_t _displaycontrol;
+    uint8_t _displaymode;
+    uint8_t _numlines;
+    bool _oled = false;
+    uint8_t _cols;
+    uint8_t _rows;
+    uint8_t _backlightval;
 };
 
 #endif
