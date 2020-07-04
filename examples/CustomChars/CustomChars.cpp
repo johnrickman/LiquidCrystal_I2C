@@ -18,11 +18,24 @@ uint8_t check[8] = {0x0,0x1,0x3,0x16,0x1c,0x8,0x0};
 uint8_t cross[8] = {0x0,0x1b,0xe,0x4,0xe,0x1b,0x0};
 uint8_t retarrow[8] = {	0x1,0x1,0x5,0x9,0x1f,0x8,0x4};
   
-LiquidCrystal_I2C lcd(0x27,20,4);  // set the LCD address to 0x27 for a 16 chars and 2 line display
+// display all keycodes
+void displayKeyCodes(LiquidCrystal_I2C &lcd) {
+  uint8_t i = 0;
+  while (1) {
+    lcd.clear();
+    lcd.print("Codes 0x"); lcd.print(i, HEX);
+    lcd.print("-0x"); lcd.print(i+15, HEX);
+    lcd.setCursor(0, 1);
+    for (int j=0; j<16; j++) {
+      lcd.printByte(i+j);
+    }
+    i+=16;
+    
+    //lcd.delayMilliseconds(4000);
+  }
+}
 
-void displayKeyCodes(void);
-
-void setup()
+void setupInternal(LiquidCrystal_I2C &lcd)
 {
   lcd.init();                      // initialize the lcd 
   lcd.backlight();
@@ -43,25 +56,13 @@ void setup()
   lcd.printByte(3);
   lcd.print(" arduinos!");
   //lcd.delayMilliseconds(5000);
-  displayKeyCodes();
-  
+  displayKeyCodes(lcd);
 }
 
-// display all keycodes
-void displayKeyCodes(void) {
-  uint8_t i = 0;
-  while (1) {
-    lcd.clear();
-    lcd.print("Codes 0x"); lcd.print(i, HEX);
-    lcd.print("-0x"); lcd.print(i+15, HEX);
-    lcd.setCursor(0, 1);
-    for (int j=0; j<16; j++) {
-      lcd.printByte(i+j);
-    }
-    i+=16;
-    
-    //lcd.delayMilliseconds(4000);
-  }
+void setup()
+{
+    LiquidCrystal_I2C lcd(0x27, 20, 4);  
+    setupInternal(lcd);
 }
 
 void loop()
@@ -70,9 +71,50 @@ void loop()
 
 #if !defined(ARDUINO)
 
+#include <stdio.h>
+#include <getopt.h>
+#include <unistd.h>
+#include <stdlib.h>
+
+void usage(char *pgm)
+{
+    fprintf(stderr, "usage: %s [-a adapter][-d addr][-r rows][-c columns]\n", pgm);
+    fprintf(stderr, "specify adapter in base 16, e.g., -a 27 for hex 0x27", pgm);
+    _exit(1);
+}
+
 int main(int argc, char *argv[])
 {
-    setup();
+    extern char *optarg;
+    extern int optind;
+    int c;
+    uint8_t adapter = 1;
+    uint8_t addr = 0x27;
+    uint8_t columns = 20; 
+    uint8_t rows = 4;
+
+    while ((c = getopt(argc, argv, "d:c:r:a:")) != -1) {
+        switch (c) {
+        case 'd':
+            addr = (uint8_t) atoi(optarg);
+            break;
+        case 'a':
+            adapter = (uint8_t) strtol(optarg, NULL, 16);
+            break;
+        case 'c':
+            columns = (uint8_t) atoi(optarg);
+            break;
+        case 'r':
+            rows = (uint8_t) atoi(optarg);
+            break;
+	default :
+            usage(argv[0]);
+        }
+    }
+
+    LiquidCrystal_I2C lcd(addr, columns, rows, adapter);  
+
+    setupInternal(lcd);
 
     while (1) {
         loop();

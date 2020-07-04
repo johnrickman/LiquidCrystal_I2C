@@ -65,6 +65,8 @@
 class LiquidCrystal_I2C { 
 public:
     LiquidCrystal_I2C(uint8_t lcd_Addr,uint8_t lcd_cols,uint8_t lcd_rows);
+    LiquidCrystal_I2C(uint8_t lcd_Addr,uint8_t lcd_cols,uint8_t lcd_rows,
+uint8_t lcd_adapter);
     void begin(uint8_t cols, uint8_t rows, uint8_t charsize = LCD_5x8DOTS);
     void clear();
     void home();
@@ -115,13 +117,15 @@ public:
     size_t print(double arg1, int arg2 = 2);
 
 private:
-    LCI2CImpl *_pImpl;
+    void createDevice();
     void init_priv();
     void send(uint8_t, uint8_t);
     void write4bits(uint8_t);
     void expanderWrite(uint8_t);
     void pulseEnable(uint8_t);
+    LCI2CImpl *_pImpl;
     uint8_t _Addr;
+    uint8_t _adapter;
     uint8_t _displayfunction;
     uint8_t _displaycontrol;
     uint8_t _displaymode;

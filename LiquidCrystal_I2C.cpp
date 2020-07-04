@@ -35,13 +35,29 @@ LiquidCrystal_I2C::LiquidCrystal_I2C(uint8_t lcd_Addr,uint8_t lcd_cols,uint8_t l
     _cols = lcd_cols;
     _rows = lcd_rows;
     _backlightval = LCD_NOBACKLIGHT;
+    _adapter = 2;
+    createDevice();
+}
+
+LiquidCrystal_I2C::LiquidCrystal_I2C(uint8_t lcd_Addr, uint8_t lcd_cols,
+uint8_t lcd_rows, uint8_t lcd_adapter)
+{
+    _Addr = lcd_Addr;
+    _cols = lcd_cols;
+    _rows = lcd_rows;
+    _backlightval = LCD_NOBACKLIGHT;
+    _adapter = lcd_adapter;
+    createDevice();
+}
 
 // compile time factory to get proper implementation class
 
+void LiquidCrystal_I2C::createDevice()
+{
 #if defined(ARDUINO) 
-    _pImpl = new ArduinoImpl(lcd_Addr, lcd_cols, lcd_rows);
+    _pImpl = new ArduinoImpl(_Addr, _cols, _rows);
 #else
-    _pImpl = new RPIImpl(lcd_Addr, lcd_cols, lcd_rows);
+    _pImpl = new RPIImpl(_Addr, _cols, _rows, _adapter);
 #endif
     _pImpl->setBacklightVal(_backlightval);
 }
