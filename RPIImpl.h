@@ -4,10 +4,6 @@
 #if !defined(ARDUINO)
 #include "LCI2CImpl.h"
 
-#define BIN 2 
-#define OCT 8
-#define HEX 16
-
 class RPIImpl : public LCI2CImpl { 
 public:
     RPIImpl(uint8_t lcd_Addr,uint8_t lcd_cols,uint8_t lcd_rows);

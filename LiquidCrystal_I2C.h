@@ -21,6 +21,16 @@
 #define LCD_ENTRYSHIFTINCREMENT 0x01
 #define LCD_ENTRYSHIFTDECREMENT 0x00
 
+#if !defined(BIN)
+#define BIN 2 
+#endif
+#if !defined(OCT)
+#define OCT 8
+#endif
+#if !defined(HEX)
+#define HEX 16
+#endif
+
 // flags for display on/off control
 #define LCD_DISPLAYON 0x04
 #define LCD_DISPLAYOFF 0x00
