@@ -14,15 +14,20 @@ inline size_t LiquidCrystal_I2C::write(uint8_t value) {
 
 #else
 #include "WProgram.h"
-
+ 
 #define printIIC(args)	Wire.send(args)
 inline void LiquidCrystal_I2C::write(uint8_t value) {
 	send(value, Rs);
 }
 
 #endif
-#include "Wire.h"
 
+#if defined (__AVR_ATtiny25__) || defined(__AVR_ATtiny45__) || defined(__AVR_ATtiny85__)
+#include <TinyWireM.h>
+#define Wire TinyWireM
+#else
+#include <Wire.h>
+#endif
 
 
 // When the display powers up, it is configured as follows:

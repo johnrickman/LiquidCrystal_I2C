@@ -4,7 +4,13 @@
 
 #include <inttypes.h>
 #include "Print.h" 
+    
+#if defined (__AVR_ATtiny25__) || defined(__AVR_ATtiny45__) || defined(__AVR_ATtiny85__)
+#include <TinyWireM.h>
+#define Wire TinyWireM
+#else
 #include <Wire.h>
+#endif
 
 // commands
 #define LCD_CLEARDISPLAY 0x01
