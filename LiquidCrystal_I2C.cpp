@@ -12,6 +12,14 @@ inline size_t LiquidCrystal_I2C::write(uint8_t value) {
 	return 1;
 }
 
+#elif defined WIRINGPI
+#include <wiringPi.h>
+#include <wiringPiI2C.h>
+inline size_t LiquidCrystal_I2C::write(uint8_t value) {
+        send(value, Rs);
+	return 1;
+}
+
 #else
 #include "WProgram.h"
 
@@ -21,7 +29,11 @@ inline void LiquidCrystal_I2C::write(uint8_t value) {
 }
 
 #endif
+
+
+#ifndef WIRINGPI
 #include "Wire.h"
+#endif
 
 
 
@@ -63,7 +75,11 @@ void LiquidCrystal_I2C::init(){
 
 void LiquidCrystal_I2C::init_priv()
 {
+	#ifndef WIRINGPI
 	Wire.begin();
+	#else
+	fd = wiringPiI2CSetup(_Addr);
+	#endif
 	_displayfunction = LCD_4BITMODE | LCD_1LINE | LCD_5x8DOTS;
 	begin(_cols, _rows);  
 }
@@ -221,14 +237,14 @@ void LiquidCrystal_I2C::createChar(uint8_t location, uint8_t charmap[]) {
 }
 
 //createChar with PROGMEM input
-void LiquidCrystal_I2C::createChar(uint8_t location, const char *charmap) {
+/*void LiquidCrystal_I2C::createChar(uint8_t location, const char *charmap) {
 	location &= 0x7; // we only have 8 locations 0-7
 	command(LCD_SETCGRAMADDR | (location << 3));
 	for (int i=0; i<8; i++) {
 	    	write(pgm_read_byte_near(charmap++));
 	}
 }
-
+*/
 // Turn the (optional) backlight off/on
 void LiquidCrystal_I2C::noBacklight(void) {
 	_backlightval=LCD_NOBACKLIGHT;
@@ -265,9 +281,14 @@ void LiquidCrystal_I2C::write4bits(uint8_t value) {
 }
 
 void LiquidCrystal_I2C::expanderWrite(uint8_t _data){                                        
+	#ifndef WIRINGPI
 	Wire.beginTransmission(_Addr);
 	printIIC((int)(_data) | _backlightval);
 	Wire.endTransmission();   
+	#else
+	wiringPiI2CWrite(fd, (int)(_data) | _backlightval);
+	#endif
+
 }
 
 void LiquidCrystal_I2C::pulseEnable(uint8_t _data){

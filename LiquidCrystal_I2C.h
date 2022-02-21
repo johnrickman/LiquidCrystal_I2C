@@ -3,8 +3,14 @@
 #define LiquidCrystal_I2C_h
 
 #include <inttypes.h>
+
+#ifndef WIRINGPI
 #include "Print.h" 
 #include <Wire.h>
+#else
+#include "Print_rpi.h"
+#endif
+
 
 // commands
 #define LCD_CLEARDISPLAY 0x01
@@ -48,9 +54,10 @@
 #define LCD_BACKLIGHT 0x08
 #define LCD_NOBACKLIGHT 0x00
 
-#define En B00000100  // Enable bit
-#define Rw B00000010  // Read/Write bit
-#define Rs B00000001  // Register select bit
+
+#define En 4  // Enable bit
+#define Rw 2  // Read/Write bit
+#define Rs 1  // Register select bit
 
 class LiquidCrystal_I2C : public Print {
 public:
@@ -83,6 +90,8 @@ public:
   void setCursor(uint8_t, uint8_t); 
 #if defined(ARDUINO) && ARDUINO >= 100
   virtual size_t write(uint8_t);
+#elif defined WIRINGPI
+  virtual size_t write(uint8_t);
 #else
   virtual void write(uint8_t);
 #endif
@@ -112,7 +121,8 @@ void draw_vertical_graph(uint8_t row, uint8_t column, uint8_t len,  uint8_t pixe
 	 
 
 private:
-  void init_priv();
+	int fd;
+	void init_priv();
   void send(uint8_t, uint8_t);
   void write4bits(uint8_t);
   void expanderWrite(uint8_t);
